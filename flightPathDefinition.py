@@ -69,8 +69,8 @@ class MyDynamicMplCanvas(MyMplCanvas):
 		   event.x, event.y, event.xdata, event.ydata))
 		
 		#rounding. Rounds to 0 decimal places, but this can be changed
-		roundedX = round(event.xdata,0)
-		roundedY = round(event.ydata,0)
+		roundedX = int(round(event.xdata,0))
+		roundedY = int(round(event.ydata,0))
 		
 		if roundedX > 250:
 			roundedX = 250
@@ -99,6 +99,7 @@ class MyDynamicMplCanvas(MyMplCanvas):
 		dataPoints[2].append(altitude)
 		print("added a point at (" + str(dataPoints[0][lenCoords]) + ", " + str(dataPoints[1][lenCoords]) + ")  Alt: " + str(dataPoints[2][lenCoords]))
 		aw.list.addItem("(" + str(dataPoints[0][lenCoords]) + ", " + str(dataPoints[1][lenCoords]) + ")  Alt: " + str(dataPoints[2][lenCoords]))
+		
 		
 		#dataPoints[0].append(event.xdata)
 		#dataPoints[1].append(event.ydata)
