@@ -23,7 +23,7 @@ progname = os.path.basename(sys.argv[0])
 progversion = "0.1"
 
 # format is [[x], [y], [alt]]
-dataPoints = [[0.0],[0.0],[0.0]]
+dataPoints = [[0],[0],[0]]
 #exampleData = [[0, 3.5, 6.5, 10.5, 14.5, 19, 21.5, 23, 25, 26.5, 29, 30],[0, 6, 12.5, 18.5, 25, 33.5, 42, 49.5, 56, 62.5, 73, 81], [5.0, 5.8, 6.8, 7.9, 9.0, 10.0, 12.2, 14.0, 16.1, 17.9, 19.1, 20.1], [20.2, 20.1, 20.1, 20.0, 20.0, 19.9, 19.9, 20.0, 19.8, 19.6, 19.6, 19.5]]
 
 
@@ -74,10 +74,10 @@ class MyDynamicMplCanvas(MyMplCanvas):
 		   ('double' if event.dblclick else 'single', event.button,
 		   event.x, event.y, event.xdata, event.ydata))
 		
-		#rounding. Rounds to 1 decimal place, but this can be changed
-		roundedX = round(event.xdata,1)
-		roundedY = round(event.ydata,1)
-		roundedAlt = round(float(aw.altitudeEdit.text()),1)
+		#rounding. Rounds to 0 decimal places, but this can be changed
+		roundedX = int(round(event.xdata,0))
+		roundedY = int(round(event.ydata,0))
+		roundedAlt = int(round(float(aw.altitudeEdit.text()),0))
 		
 		if roundedX > 250:
 			roundedX = 250
@@ -255,9 +255,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 		
 		self.main_widget.setFocus()
 		self.setCentralWidget(self.main_widget)
-
-
-		self.statusBar().showMessage("All hail matplotlib!", 2000)
 	
 	#def buttonClicked(self, dc):
 	#	dc.addPoint(self, str(self.xEdit.text()), str(self.yEdit.text()), str(self.altitudeEdit.text()))
@@ -313,9 +310,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 		newAlt = self.altitudeEdit.text()
 		
 		if isinstance(float(newX), numbers.Number) and isinstance(float(newY), numbers.Number) and isinstance(float(newAlt), numbers.Number):
-			dataPoints[0].append(float(newX))
-			dataPoints[1].append(float(newY))
-			dataPoints[2].append(float(newAlt))
+			dataPoints[0].append(int(float(newX)))
+			dataPoints[1].append(int(float(newY)))
+			dataPoints[2].append(int(float(newAlt)))
 			print("added a point at (" + str(dataPoints[0][lenCoords]) + ", " + str(dataPoints[1][lenCoords]) + ")  Alt: " + str(dataPoints[2][lenCoords]))
 			self.list.addItem(str(lenCoords + 1) + ".  " + "(" + str(dataPoints[0][lenCoords]) + ", " + str(dataPoints[1][lenCoords]) + ")  Alt: " + str(dataPoints[2][lenCoords]))
 		
@@ -353,7 +350,17 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 		
 		msg = QtWidgets.QMessageBox()
 		reply = msg.question(self, 'Begin Flight?', "Flight path saved to data.csv. Are you sure you want to begin flight?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
-		msg.exec_()
+		
+		if reply == QtWidgets.QMessageBox.Yes:
+			dictList = []
+			for i in range(0, lenCoords):
+				currentDict = {'x': dataPoints[0][i], 'y': dataPoints[1][i], 'z': dataPoints[2][i]}
+				dictList.append(currentDict)
+			
+			#SEND dictList
+			print(dictList)
+		
+		#msg.exec_()
 		
 	def threeDButtonClicked(self):
 		fig = plt.figure()
