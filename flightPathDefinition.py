@@ -384,19 +384,23 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 		plt.show()
 	
 	def loadCSVButtonClicked(self):
-		del dataPoints[0][:]
-		del dataPoints[1][:]
-		del dataPoints[2][:]
-		aw.list.clear()
-		with open('data.csv', 'r') as csvfile:
-			csvReader = csv.reader(csvfile)
-			for row in csvReader:
-				if len(row) == 3:
-					try:
-						self.dc.addPoint(int(row[0]), int(row[1]), int(row[2]))
-						print(row)
-					except ValueError:
-						True
+		msg = QtWidgets.QMessageBox()
+		reply = msg.question(self, 'Load waypoints from CSV?', "Are you sure? This will overwrite your existing waypoints.", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+		
+		if reply == QtWidgets.QMessageBox.Yes:
+			del dataPoints[0][:]
+			del dataPoints[1][:]
+			del dataPoints[2][:]
+			aw.list.clear()
+			with open('data.csv', 'r') as csvfile:
+				csvReader = csv.reader(csvfile)
+				for row in csvReader:
+					if len(row) == 3:
+						try:
+							self.dc.addPoint(int(row[0]), int(row[1]), int(row[2]))
+							print(row)
+						except ValueError:
+							True
 						
 	# Make sure to check if any row is selected here to avoid crash
 	def keyPressEvent(self, event):
