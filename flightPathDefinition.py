@@ -214,7 +214,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 		self.startButton = QPushButton("Begin")
 		self.startButton.clicked.connect(self.beginButtonClicked)
 		self.threeDButton = QPushButton("3D Plot")
-		self.threeDButton.clicked.connect(self.threeDButtonClicked)		
+		self.threeDButton.clicked.connect(self.threeDButtonClicked)
+		self.loadCSVButton = QPushButton("Load from CSV")
+		self.loadCSVButton.clicked.connect(self.loadCSVButtonClicked)
 		self.gpsCheckBox = QCheckBox()
 		
 		self.altitudeCheckBox = QCheckBox()
@@ -235,6 +237,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 		l.addWidget(self.gpsCheckBox, 1, 4, 1, 1)
 		l.addWidget(self.startButton, 3, 4, 1, 1)
 		l.addWidget(self.threeDButton, 3, 0, 1, 1)
+		l.addWidget(self.loadCSVButton, 3, 2, 1, 1)
 		l.addWidget(self.altitudeCheckBoxLabel, 0, 4, 1, 1)
 		l.addWidget(self.altitudeCheckBox, 0, 4, 1, 1)
 
@@ -339,19 +342,20 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 			self.dc.draw()
 	
 	def beginButtonClicked(self):
-		lenCoords = len(dataPoints[0])
-		with open('data.csv', 'w') as csvfile:
-			fieldnames = ['xVal','yVal','altitude']
-			writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-			
-			writer.writeheader()
-			for i in range(0, lenCoords):
-				writer.writerow({'xVal': str(dataPoints[0][i]), 'yVal': str(dataPoints[1][i]), 'altitude': str(dataPoints[2][i])})
-		
 		msg = QtWidgets.QMessageBox()
-		reply = msg.question(self, 'Begin Flight?', "Flight path saved to data.csv. Are you sure you want to begin flight?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+		reply = msg.question(self, 'Begin Flight?', "Flight path will be saved to data.csv. Are you sure you want to begin flight?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
 		
 		if reply == QtWidgets.QMessageBox.Yes:
+			lenCoords = len(dataPoints[0])
+			with open('data.csv', 'w') as csvfile:
+				fieldnames = ['xVal','yVal','altitude']
+				writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+			
+				writer.writeheader()
+				for i in range(0, lenCoords):
+					writer.writerow({'xVal': str(dataPoints[0][i]), 'yVal': str(dataPoints[1][i]), 'altitude': str(dataPoints[2][i])})
+
+			
 			dictList = []
 			for i in range(0, lenCoords):
 				currentDict = {'x': dataPoints[0][i], 'y': dataPoints[1][i], 'z': dataPoints[2][i]}
@@ -378,7 +382,22 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 		ax.set_zlim(0, 25)
 
 		plt.show()
-		
+	
+	def loadCSVButtonClicked(self):
+		del dataPoints[0][:]
+		del dataPoints[1][:]
+		del dataPoints[2][:]
+		aw.list.clear()
+		with open('data.csv', 'r') as csvfile:
+			csvReader = csv.reader(csvfile)
+			for row in csvReader:
+				if len(row) == 3:
+					try:
+						self.dc.addPoint(int(row[0]), int(row[1]), int(row[2]))
+						print(row)
+					except ValueError:
+						True
+						
 	# Make sure to check if any row is selected here to avoid crash
 	def keyPressEvent(self, event):
 		if event.key() == QtCore.Qt.Key_Delete:
