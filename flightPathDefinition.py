@@ -343,11 +343,11 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 	
 	def beginButtonClicked(self):
 		msg = QtWidgets.QMessageBox()
-		reply = msg.question(self, 'Begin Flight?', "Flight path will be saved to data.csv. Are you sure you want to begin flight?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+		reply = msg.question(self, 'Begin Flight?', "Flight path will be saved to flightPath.csv. Are you sure you want to begin flight?", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
 		
 		if reply == QtWidgets.QMessageBox.Yes:
 			lenCoords = len(dataPoints[0])
-			with open('data.csv', 'w') as csvfile:
+			with open('flightPath.csv', 'w') as csvfile:
 				fieldnames = ['xVal','yVal','altitude']
 				writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 			
@@ -392,7 +392,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 			del dataPoints[1][:]
 			del dataPoints[2][:]
 			aw.list.clear()
-			with open('data.csv', 'r') as csvfile:
+			with open('flightPath.csv', 'r') as csvfile:
 				csvReader = csv.reader(csvfile)
 				for row in csvReader:
 					if len(row) == 3:
