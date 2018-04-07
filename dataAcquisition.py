@@ -18,6 +18,7 @@ import matplotlib
 from random import randint
 import datetime
 import time
+import csv
 
 starttime=time.time()
 paramList = ["x","y","z","lat","lon","temp","time"]
@@ -131,6 +132,7 @@ class MPL_WIDGET_3D(QtWidgets.QWidget):
 		self.zAxisList.setFixedWidth(200)
 		
 		self.axesLimitsButton = QPushButton("Change Limits")
+		self.csvButton = QPushButton("Output to CSV")
 		self.xLimitLowLE = QLineEdit()
 		self.yLimitLowLE = QLineEdit()
 		self.zLimitLowLE = QLineEdit()
@@ -171,6 +173,7 @@ class MPL_WIDGET_3D(QtWidgets.QWidget):
 		self.xAxisList.clicked.connect(self.listItemClicked)
 		self.yAxisList.clicked.connect(self.listItemClicked)
 		self.zAxisList.clicked.connect(self.listItemClicked)
+		self.csvButton.clicked.connect(self.csvButtonClicked)
 		
 		self.vbox = QtWidgets.QGridLayout()
 		self.vbox.addWidget(self.canvas,0,0,6,1)
@@ -188,6 +191,7 @@ class MPL_WIDGET_3D(QtWidgets.QWidget):
 		self.vbox.addWidget(self.zLimitLowLE, 5,2,1,1)
 		self.vbox.addWidget(self.zLimitHighLE, 5,3,1,1)
 		self.vbox.addWidget(self.axesLimitsButton,6,2,1,2)
+		self.vbox.addWidget(self.csvButton,6,1,1,1)
 		self.setLayout(self.vbox)
 	
 	def listItemClicked(self):
@@ -226,10 +230,27 @@ class MPL_WIDGET_3D(QtWidgets.QWidget):
 		mplQt.canvas.ax.set_ylim(paramLimits[yrow][0],paramLimits[yrow][1])
 		mplQt.canvas.ax.set_zlim(paramLimits[zrow][0],paramLimits[zrow][1])
 
+	def csvButtonClicked(self):
+		msg = QtWidgets.QMessageBox()
+		reply = msg.question(self, 'Output to CSV?', "Data will be output to data.csv.", QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
 		
+		if reply == QtWidgets.QMessageBox.Yes:
+			with open('data.csv', 'w') as csvfile:
+				
+
+				fieldnames = paramList
+				writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+			
+				writer.writeheader()
+				for i in range(0, len(dataCollected[0])):
+					currentOutputDict = {}
+					for j in range(0,dictionaryLength):
+						currentOutputDict[paramList[j]] = dataCollected[j][i]
+					writer.writerow(currentOutputDict)
+
 
 if __name__ == "__main__":
 	app = QtWidgets.QApplication(sys.argv)
 	mplQt = MPL_WIDGET_3D()
 	mplQt.show()
-	sys.exit(app.exec_())
+sys.exit(app.exec_())
