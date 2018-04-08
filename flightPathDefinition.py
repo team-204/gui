@@ -18,6 +18,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import communication
 
 progname = os.path.basename(sys.argv[0])
 progversion = "0.1"
@@ -26,6 +27,7 @@ progversion = "0.1"
 dataPoints = [[0],[0],[0]]
 #exampleData = [[0, 3.5, 6.5, 10.5, 14.5, 19, 21.5, 23, 25, 26.5, 29, 30],[0, 6, 12.5, 18.5, 25, 33.5, 42, 49.5, 56, 62.5, 73, 81], [5.0, 5.8, 6.8, 7.9, 9.0, 10.0, 12.2, 14.0, 16.1, 17.9, 19.1, 20.1], [20.2, 20.1, 20.1, 20.0, 20.0, 19.9, 19.9, 20.0, 19.8, 19.6, 19.6, 19.5]]
 
+com = communication.Communication(sys.argv[1],int(sys.argv[2]))
 
 class MyMplCanvas(FigureCanvas):
 	"""Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
@@ -348,12 +350,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 		if reply == QtWidgets.QMessageBox.Yes:
 			lenCoords = len(dataPoints[0])
 			with open('flightPath.csv', 'w') as csvfile:
-				fieldnames = ['xVal','yVal','altitude']
+				fieldnames = ['x','y','z']
 				writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 			
 				writer.writeheader()
 				for i in range(0, lenCoords):
-					writer.writerow({'xVal': str(dataPoints[0][i]), 'yVal': str(dataPoints[1][i]), 'altitude': str(dataPoints[2][i])})
+					writer.writerow({'x': str(dataPoints[0][i]), 'y': str(dataPoints[1][i]), 'z': str(dataPoints[2][i])})
 
 			
 			dictList = []
@@ -362,7 +364,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 				dictList.append(currentDict)
 			
 			#SEND dictList
-			print(dictList)
+			com.send(dictList)
 		
 		#msg.exec_()
 		
