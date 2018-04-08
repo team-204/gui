@@ -38,7 +38,7 @@ for x in range(0,dictionaryLength):
 # testing
 #dataCollected = [[0],[0],[0],[33.2140], [87.5391], [25], [datetime.datetime.now()]]
 
-com = communication.Communication(sys.argv[1],int(sys.argv[2]))
+com = communication.Communication(sys.argv[1],float(sys.argv[2]))
 
 
 class QtMplCanvas(FigureCanvas):
@@ -68,8 +68,6 @@ class QtMplCanvas(FigureCanvas):
 		self.timer.start(1000)
 
 	def Time(self):
-		
-		
 		receivedPackage = com.receive()
 		
 		# check if the received package is a dictionary
