@@ -20,6 +20,9 @@ import datetime
 import time
 import csv
 
+import sys
+import communication
+
 starttime=time.time()
 paramList = ["x","y","z","lat","lon","temp","time"]
 paramLimits = [[-250, 250],[-250, 250],[-1,50],[33,34],[87,88],[0,30],["please do not click time","i mean it"]]
@@ -28,13 +31,15 @@ dictionaryLength=len(paramList)
 # displayedParamList is the list that goes in xAxisList, yAxisList, zAxisList. For now the same as paramList.
 displayedParamList = paramList
 
-# commented out for testing
-#dataCollected = []
-#for x in range(0,dictionaryLength):
-#	dataCollected.append([])			# because of code in QtMplCanvas.Time(), dataCollected is a list with the same index meaning as paramList (i.e. dataCollected[0] is the list of x values, dataCollected[1] is the list of y values, etc)
+dataCollected = []
+for x in range(0,dictionaryLength):
+	dataCollected.append([])			# because of code in QtMplCanvas.Time(), dataCollected is a list with the same index meaning as paramList (i.e. dataCollected[0] is the list of x values, dataCollected[1] is the list of y values, etc)
 
 # testing
-dataCollected = [[0],[0],[0],[33.2140], [87.5391], [25], [datetime.datetime.now()]]
+#dataCollected = [[0],[0],[0],[33.2140], [87.5391], [25], [datetime.datetime.now()]]
+
+com = communication.Communication(sys.argv[1],int(sys.argv[2]))
+
 
 class QtMplCanvas(FigureCanvas):
 	def __init__(self, parent=None, width = 6.5, height = 5.5, dpi = 100, sharex = None, sharey = None, fig = None):
@@ -63,24 +68,37 @@ class QtMplCanvas(FigureCanvas):
 		self.timer.start(1000)
 
 	def Time(self):
-		# This is where data collection happens, currently a simulation
-		# previousDict is unnecessary except for simulation
-		previousDict = {"x":dataCollected[0][-1], "y":dataCollected[1][-1], "z":dataCollected[2][-1], "lat":dataCollected[3][-1], "lon":dataCollected[4][-1], "temp":dataCollected[5][-1], "time":dataCollected[6][-1]}
-		currentDict = {"x":round(previousDict["x"]*1.3+1), "y":previousDict["y"]+4, "z":previousDict["z"]+randint(0,3), "lat": 33.2140, "lon": 87.5391, "temp":previousDict["temp"]+random.uniform(-0.2,0.2), "time":datetime.datetime.now()}
-		print(previousDict)
-		print(currentDict)
 		
-		for key, value in currentDict.items():
-			ind = paramList.index(key)		# find the index w.r.t. paramList of the current key. This is the same index w.r.t. dataCollected
-			dataCollected[ind].append(value)
+		
+		receivedPackage = com.receive()
+		
+		# check if the received package is a dictionary
+		if(isinstance(receivedPackage,dict)):
+			currentDict = receivedPackage
+			correctDictBool = True
 			
-		#print(currentDict)
-		#print(dataCollected)
-		#fix this next line so it's not so ugly and probably inefficient
-		self.ax.scatter(currentDict[paramList[mplQt.xAxisList.currentRow()]], currentDict[paramList[mplQt.yAxisList.currentRow()]], currentDict[paramList[mplQt.zAxisList.currentRow()]], c='r', linestyle='dashed', marker='o')
-		#self.ax.plot(currentDict['x'], currentDict['y'], currentDict['z'], color='r')
-		self.fig.canvas.draw()
-		plt.draw()                      # redraw the canvas
+			# Check if the dictionary keys match the expected keys
+			for s in paramList:
+				if not(s in currentDict):
+					print("incorrect key in dict")
+					correctDictBool = False
+					break
+			# If all the dictionary keys match the expected keys, add the values to dataCollected list and redraw the canvas
+			if correctDictBool == True:
+				for key, value in currentDict.items():
+					ind = paramList.index(key)		# find the index w.r.t. paramList of the current key. This is the same index w.r.t. dataCollected
+					dataCollected[ind].append(value)
+			
+				#print(currentDict)
+				#print(dataCollected)
+				#fix this next line so it's not so ugly and probably inefficient
+				self.ax.scatter(currentDict[paramList[mplQt.xAxisList.currentRow()]], currentDict[paramList[mplQt.yAxisList.currentRow()]], currentDict[paramList[mplQt.zAxisList.currentRow()]], c='r', linestyle='dashed', marker='o')
+				#self.ax.plot(currentDict['x'], currentDict['y'], currentDict['z'], color='r')
+				self.fig.canvas.draw()
+				plt.draw()                      # redraw the canvas
+		elif(isinstance(receivedPackage,str)):
+			print("Received Message: " + receivedPackage)
+		
 	
 	def sizeHint(self):
 		w, h = self.get_width_height()
