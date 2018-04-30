@@ -346,7 +346,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 				dictList.append(currentDict)
 			
 			#SEND dictList
-			com.send(dictList)
+			#com.send(dictList)
 		
 		#msg.exec_()
 		
