@@ -9,14 +9,10 @@ from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationTo
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-import random
 
 from PyQt5.QtWidgets import QListWidget, QLineEdit, QLabel, QPushButton, QCheckBox
 
 import matplotlib
-
-from random import randint
-import datetime
 import time
 import csv
 

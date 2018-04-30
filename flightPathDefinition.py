@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import sys
 import os
 import csv
-import random, numbers
+import numbers
 import re
 from matplotlib.backends import qt_compat
 use_pyside = qt_compat.QT_API == qt_compat.QT_API_PYSIDE
@@ -13,7 +13,6 @@ else:
 	from PyQt5.QtWidgets import QListWidget, QLineEdit, QLabel, QPushButton, QCheckBox, QInputDialog
 	from PyQt5.QtGui import QFont
 	
-from numpy import arange, sin, pi
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d import Axes3D
