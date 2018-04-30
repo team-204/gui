@@ -21,7 +21,7 @@ import communication
 
 starttime=time.time()
 paramList = ["x","y","z","lat","lon","temp","time"]
-paramLimits = [[-250, 250],[-250, 250],[-1,50],[33,34],[87,88],[0,30],["please do not click time","i mean it"]]
+paramLimits = [[-250, 250],[-250, 250],[-1,50],[33,34],[87,88],[0,30],[0,600]]
 dictionaryLength=len(paramList)
 
 # displayedParamList is the list that goes in xAxisList, yAxisList, zAxisList. For now the same as paramList.
