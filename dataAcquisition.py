@@ -86,6 +86,8 @@ class QtMplCanvas(FigureCanvas):
 				for key, value in currentDict.items():
 					ind = paramList.index(key)		# find the index w.r.t. paramList of the current key. This is the same index w.r.t. dataCollected
 					dataCollected[ind].append(value)
+				# overwrite the collected time value with time since start of flight, i.e. the first time will be 0.
+				dataCollected[6][-1] = dataCollected[6][-1] - dataCollected[6][0];	
 			
 				#print(currentDict)
 				#print(dataCollected)
@@ -93,7 +95,7 @@ class QtMplCanvas(FigureCanvas):
 				self.ax.scatter(currentDict[paramList[mplQt.xAxisList.currentRow()]], currentDict[paramList[mplQt.yAxisList.currentRow()]], currentDict[paramList[mplQt.zAxisList.currentRow()]], c='r', linestyle='dashed', marker='o')
 				#self.ax.plot(currentDict['x'], currentDict['y'], currentDict['z'], color='r')
 				self.fig.canvas.draw()
-				plt.draw()                      # redraw the canvas
+				plt.draw()
 		elif(isinstance(receivedPackage,str)):
 			print("Received Message: " + receivedPackage)
 		
@@ -229,7 +231,7 @@ class MPL_WIDGET_3D(QtWidgets.QWidget):
 		mplQt.canvas.ax.set_ylabel(displayedParamList[yrow])
 		mplQt.canvas.ax.set_zlabel(displayedParamList[zrow])
 		mplQt.canvas.fig.canvas.draw()
-		plt.draw()                      # redraw the canvas
+		plt.draw()
 		
 	def axesLimitsButtonClicked(self):
 		xrow = mplQt.xAxisList.currentRow()

@@ -24,14 +24,11 @@ progname = os.path.basename(sys.argv[0])
 progversion = "0.1"
 
 # format is [[x], [y], [alt]]
-dataPoints = [[0],[0],[0]]
-#exampleData = [[0, 3.5, 6.5, 10.5, 14.5, 19, 21.5, 23, 25, 26.5, 29, 30],[0, 6, 12.5, 18.5, 25, 33.5, 42, 49.5, 56, 62.5, 73, 81], [5.0, 5.8, 6.8, 7.9, 9.0, 10.0, 12.2, 14.0, 16.1, 17.9, 19.1, 20.1], [20.2, 20.1, 20.1, 20.0, 20.0, 19.9, 19.9, 20.0, 19.8, 19.6, 19.6, 19.5]]
+dataPoints = [[],[],[]]
 
 com = communication.Communication(sys.argv[1],int(sys.argv[2]))
 
 class MyMplCanvas(FigureCanvas):
-	"""Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
-
 	def __init__(self, parent=None, width=5, height=4, dpi=100):
 		fig = Figure(figsize=(width, height), dpi=dpi)
 		self.axes = fig.add_subplot(111)
@@ -50,18 +47,7 @@ class MyMplCanvas(FigureCanvas):
 		pass
 
 
-class MyStaticMplCanvas(MyMplCanvas):
-	"""Simple canvas with a sine plot."""
-
-	def compute_initial_figure(self):
-		t = arange(0.0, 3.0, 0.01)
-		s = sin(2*pi*t)
-		self.axes.plot(t, s)
-
-
 class MyDynamicMplCanvas(MyMplCanvas):
-	"""A canvas that updates itself every second with a new plot."""
-	
 	def __init__(self, *args, **kwargs):
 		MyMplCanvas.__init__(self, *args, **kwargs)
 		#timer = QtCore.QTimer(self)
@@ -130,9 +116,6 @@ class MyDynamicMplCanvas(MyMplCanvas):
 			self.axes.annotate(str(i + 1), (dataPoints[0][i] - 2.5 - 3*len(str(i+1)), dataPoints[1][i] - 8),  size=8)
 			
 		self.draw()
-	
-	# Edit a point
-	#def listItemDoubleClicked(self):
 		
 	
 	def removePoint(self, indexToRemove):
@@ -428,14 +411,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 			
 	def about(self):
 		QtWidgets.QMessageBox.about(self, "About",
-								"""embedding_in_qt4.py example
-Copyright 2005 Florent Rougon, 2006 Darren Dale
-
-This program is a simple example of a Qt4 application embedding matplotlib
-canvases.
-
-It may be used and modified with no restriction; raw copies as well as
-modified versions may be distributed without limitation."""
+								"""A program to plot a flight path for an autonomous UAV."""
 								)
 
 
