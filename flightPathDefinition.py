@@ -25,7 +25,7 @@ progversion = "0.1"
 # format is [[x], [y], [alt]]
 dataPoints = [[],[],[]]
 
-#com = communication.Communication(sys.argv[1],int(sys.argv[2]))
+com = communication.Communication(sys.argv[1],float(sys.argv[2]))
 
 class MyMplCanvas(FigureCanvas):
 	def __init__(self, parent=None, width=5, height=4, dpi=100):
