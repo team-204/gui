@@ -76,6 +76,9 @@ class MyDynamicMplCanvas(MyMplCanvas):
 		elif roundedY < -250:
 			roundedY = -250
 		
+		if roundedAlt < 1:
+			roundedAlt = 1
+		
 		self.addPoint(roundedX, roundedY, roundedAlt)
 	
 	def addPoint(self, xPoint, yPoint, altitude):
@@ -186,7 +189,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 		
 		self.xEdit.setText('0')
 		self.yEdit.setText('0')
-		self.altitudeEdit.setText('0')
+		self.altitudeEdit.setText('10')
 		
 		self.xLabel = QLabel('X Coordinate')
 		self.yLabel = QLabel('Y Coordinate')
